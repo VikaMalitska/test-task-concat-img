@@ -1,41 +1,50 @@
+class InputFileApp{
+    constructor({element1, element2}){
+        element1.addEventListener("change", this.onChange.bind(this))
+        this.inputFile = new InputElementFile({element1});
+        this.canvasElement = new CanvasElement({element2});
+    }
+    onChange(){
+        const imgArr = this.inputFile.getImages();
+        this.canvasElement.drawImageInCanvas(imgArr);
+    }
+} 
+
 
 
 class InputElementFile{
-    constructor({elem}){
-        elem.addEventListener("change", this.onChange.bind(this));
+    constructor({element1}){
+        this.element = element1;
+        //this.files = this.element.files;
     }
-    onChange (event){
-        let elem = event.target;
-        let files = elem.files;
-        let img = this.getImage(files);
-        img.onload = ()=> {
-            window.URL.revokeObjectURL(this.src);
-            this.getCanvasEl().drawImage(img,10, 10, 150, 150);
-        }
-
-    }
-   
-    getCanvasEl(){
-        let canvas = document.getElementById('canvas');
-        let ctx = canvas.getContext('2d');
-        return ctx;
-    }
-
-    getImage(files){
-        let img;
+    getImages(){
+        let files = this.element.files;
+        let imgs = [];
         for (var i = 0; i < files.length; i++) {
             let file = files[i];
-            img = new Image();
-            img.src = window.URL.createObjectURL(file);
+            imgs[i] = new Image();
+            imgs[i].src = window.URL.createObjectURL(file);
         }
-        return img;
+        return imgs;
+    }
+
+}
+
+class CanvasElement {
+    constructor({element2}){
+        this.canvasEl = element2;
+        this.ctx = this.canvasEl.getContext('2d');
+    }
+    drawImageInCanvas(imgArr){
+        for(let i = 0; i < imgArr.length; i++){
+            imgArr[i].onload = ()=> {
+                window.URL.revokeObjectURL(this.src);
+                this.ctx.drawImage(imgArr[i],10, 10, 150, 150);
+            }
+        }
     }
 
 }
 
 
-
-
-let inputElementFile = new InputElementFile({
-    elem: document.getElementById("image")
-})
+new InputFileApp({element1: document.getElementById("image"), element2: document.getElementById("canvas")});
