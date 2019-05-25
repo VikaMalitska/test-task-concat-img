@@ -89,7 +89,7 @@ class Galery{
     constructor (){
         this.images = [];
     }
-
+//
     getImages({files}){
         let copyFiles = files.slice();
         this.images = [...this.images, ...copyFiles];
